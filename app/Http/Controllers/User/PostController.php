@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Post\StorePostRequest;
+use App\Http\Requests\Post\UpdatePostRequest;
 use App\Models\Post;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -23,55 +24,43 @@ class PostController extends Controller
         return view('user.posts.create');
     }
 
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:100'],
-            'content' => ['required', 'string', 'max:10000'],
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'published' => ['nullable', 'boolean'],
-        ]);
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('uploads', 'public');
-        }
-        $post = Post::query()->create([
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-            'published' => $validated['published'],
-            'image' => $path,
-            'user_id' => auth()->id(),
-        ]);
+        $data = $request->validated();
+        $path = $request->file('image')->store('uploads', 'public');
+
+        $data['published'] = $request->boolean('published');
+        $data['image'] = $path;
+        $data['user_id'] = auth()->id();
+        $post = Post::query()->create($data);
 
         return redirect()->route('user.posts.show', $post);
     }
 
     public function show(Post $post)
     {
+        $user = auth()->user();
+        abort_if($post->user_id !== $user->id && !$user->is_admin, 403);
         return view('user.posts.show', compact('post'));
     }
 
     public function edit(Post $post)
     {
+        $user = auth()->user();
+        abort_if($post->user_id !== $user->id && !$user->is_admin, 403);
         return view('user.posts.edit', compact('post'));
     }
 
-    public function update(Request $request, Post $post)
+    public function update(UpdatePostRequest $request, Post $post)
     {
-        if (($post->user_id !== Auth::id()) && ! auth()->user()->is_admin) {
-            abort(403);
-        }
+        $data = $request->validated();
 
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'published' => 'nullable|boolean',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
         if ($request->hasFile('image')) {
+            Storage::disk('public')->delete($post->image);
             $path = $request->file('image')->store('uploads', 'public');
+            $data['image'] = $path;
         }
-        $data['published'] = $request->has('published');
-        $data['image'] = $path ?? $post->image;
+        $data['published'] = $request->boolean('published');
         $post->update($data);
 
         return redirect()->route('user.posts.show', $post)->with('success', 'Пост обновлён');
@@ -79,12 +68,13 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
-        if ($post->user_id !== Auth::id()) {
-            abort(403);
+        abort_if($post->user_id !== auth()->id() && !auth()->user()->is_admin, 403);
+        if ($post->image) {
+            Storage::disk('public')->delete($post->image);
         }
 
         $post->delete();
 
-        return redirect()->route('user.posts')->with('success', 'Пост удалён');
+        return redirect()->back()->with('success', 'Пост удалён');
     }
 }

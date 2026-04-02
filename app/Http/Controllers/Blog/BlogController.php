@@ -19,7 +19,7 @@ class BlogController extends Controller
         ]);
 
         $posts = Post::query()
-            ->with('user','comments')
+            ->with('user', 'comments')
             ->when($validated['search'] ?? null, function (Builder $query, $search) {
                 $query->where('title', 'like', "%{$search}%");
             })

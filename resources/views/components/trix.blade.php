@@ -1,5 +1,3 @@
-
-
 <input type="hidden" id="{{ $name }}" {{ $attributes }}>
 <trix-editor input="{{ $name }}"></trix-editor>
 

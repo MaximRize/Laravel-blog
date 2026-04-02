@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
@@ -14,14 +14,9 @@ class RegisterController extends Controller
         return view('register.index');
     }
 
-    public function store(Request $request)
+    public function store(RegisterRequest $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:30', 'alpha_num', 'unique:users'],
-            'email' => ['required', 'email', 'unique:users'],
-            'password' => ['required', 'string', 'min:3', 'max:50', 'confirmed'],
-            'agreement' => ['accepted'],
-        ]);
+        $validated = $request->validated();
         $user = User::create(
             [
                 'name' => $validated['name'],
@@ -30,6 +25,7 @@ class RegisterController extends Controller
 
             ]
         );
+        auth()->login($user);
 
         return redirect()->route('user');
     }

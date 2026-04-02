@@ -24,7 +24,6 @@
             {{ Str::limit(strip_tags($post->content), 80) }}
         </p>
 
-        <!-- Первая строка: автор и дата (без времени) -->
         <div class="d-flex justify-content-between align-items-center mb-1">
             <div class="d-flex align-items-center text-muted small" style="min-width: 0; flex: 1;">
                 <i class="bi bi-person me-1 flex-shrink-0"></i>
@@ -38,7 +37,7 @@
             </div>
         </div>
 
-        <!-- Вторая строка: время и относительная дата с иконкой часов -->
+
         <div class="d-flex align-items-center text-muted small">
             <i class="bi bi-clock me-1 flex-shrink-0"></i>
             <span class="js-local-time" data-utc="{{ $post->created_at->timestamp }}"></span>
@@ -66,10 +65,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.js-local-time').forEach(function(el) {
-                const timestamp = el.dataset.utc; // Unix timestamp из атрибута
+                const timestamp = el.dataset.utc;
                 if (timestamp) {
-                    const date = new Date(timestamp * 1000); // переводим в миллисекунды
-                    // Форматируем локально: часы и минуты
+                    const date = new Date(timestamp * 1000);
+
                     const hours = date.getHours().toString().padStart(2, '0');
                     const minutes = date.getMinutes().toString().padStart(2, '0');
                     el.textContent = hours + ':' + minutes;

@@ -10,26 +10,3 @@
     </div>
 @endif
 
-{{--@error('email')--}}
-{{--<div class="alert alert-danger text-center m-0" role="alert">--}}
-{{--    {{$message}}--}}
-{{--</div>--}}
-{{--@enderror--}}
-
-{{--@error('password')--}}
-{{--<div class="alert alert-danger text-center m-0" role="alert">--}}
-{{--    {{$message}}--}}
-{{--</div>--}}
-{{--@enderror--}}
-
-{{--@error('title')--}}
-{{--<div class="alert alert-danger text-center m-0" role="alert">--}}
-{{--    {{$message}}--}}
-{{--</div>--}}
-{{--@enderror--}}
-
-{{--@error('content')--}}
-{{--<div class="alert alert-danger text-center m-0" role="alert">--}}
-{{--    {{$message}}--}}
-{{--</div>--}}
-{{--@enderror--}}

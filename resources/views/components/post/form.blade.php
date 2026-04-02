@@ -1,4 +1,3 @@
-{{-- resources/views/components/post/form.blade.php --}}
 @props(['post' => null])
 
 <x-form method="POST" {{ $attributes->except('method') }} enctype="multipart/form-data">
@@ -6,7 +5,7 @@
         @method('PUT')
     @endif
 
-    {{-- Название --}}
+
     <x-form-item>
         <x-label required>{{ __('Название поста') }}</x-label>
         <x-input
@@ -18,7 +17,7 @@
         <x-error name="title"/>
     </x-form-item>
 
-    {{-- Содержание --}}
+
     <x-form-item>
         <x-label required>{{ __('Содержание поста') }}</x-label>
         <x-trix
@@ -28,7 +27,7 @@
         <x-error name="content"/>
     </x-form-item>
 
-    {{-- Изображение --}}
+
     <x-form-item>
         <x-label>{{ __('Изображение (обложка)') }}</x-label>
         <input
@@ -42,16 +41,13 @@
 
         @if($post && $post->image)
             <div class="mt-2">
-                <img src="{{ asset('storage/' . $post->image) }}" alt="Preview" style="max-height: 150px; border-radius: 8px;">
-                <div class="form-check mt-1">
-                    <input type="checkbox" name="remove_image" id="remove_image" value="1" class="form-check-input">
-                    <label for="remove_image" class="form-check-label text-danger">{{ __('Удалить текущее изображение') }}</label>
-                </div>
+                <img src="{{ asset('storage/' . $post->image) }}" alt="Preview"
+                     style="max-height: 150px; border-radius: 8px;">
             </div>
         @endif
     </x-form-item>
 
-    {{-- Опубликован --}}
+
     <x-form-item>
         <div class="form-check">
             <input
@@ -69,7 +65,7 @@
         <x-error name="published"/>
     </x-form-item>
 
-    {{-- Кнопка отправки --}}
+
     <div class="mt-4">
         <x-button type="submit">
             {{ $slot }}
